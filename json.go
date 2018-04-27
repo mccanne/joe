@@ -1,8 +1,8 @@
 //
 // joe is a simple JSON object extractor (joe) for Go
-// 
+//
 // joe provides a simple API to access unstructured and ad hoc JSON objects
-// that is parsed generically by json.Unmarshal.  When JSON inputs are 
+// that is parsed generically by json.Unmarshal.  When JSON inputs are
 // unstructured, it can be difficult to define Go structs that map cleanly
 // onto the JSON input.
 //
@@ -46,7 +46,7 @@ func (p *JSON) UnmarshalJSON(in []byte) error {
 //
 // Value returns the generic value of this JSON object
 //
-func (o JSON) Value() (interface{}) {
+func (o JSON) Value() interface{} {
 	return o.v
 }
 
@@ -183,4 +183,3 @@ func (o JSON) Get(key string) JSON {
 	}
 	return Undefined
 }
-
