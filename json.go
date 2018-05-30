@@ -9,7 +9,7 @@
 // Joe provides all the reflection needed into the empty interface types
 // that Unmarshall creates but with a javascripty set of method calls.
 //
-package joe
+package joe // import "github.com/mccanne/joe"
 
 import (
 	"encoding/json"
@@ -41,6 +41,14 @@ func Parse(in []byte) (JSON, error) {
 //
 func (p *JSON) UnmarshalJSON(in []byte) error {
 	return json.Unmarshal(in, &p.v)
+}
+
+//
+// MarshalJSON implements JSON's custom parser so anything declared as type joe.JSON
+// will be encoded by go's json package into an object for this interface
+//
+func (p *JSON) MarshalJSON() ([]byte, error) {
+	return json.Marshal(p.v)
 }
 
 //
