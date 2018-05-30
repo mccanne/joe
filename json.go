@@ -13,6 +13,7 @@ package joe // import "github.com/mccanne/joe"
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 //
@@ -23,8 +24,11 @@ type JSON struct {
 	v interface{}
 }
 
-var Null = JSON{nil}
-var Undefined = JSON{Null}
+var (
+	Undefined           = JSON{nil}
+	Null                = JSON{Undefined}
+	ErrMarshalUndefined = errors.New("Cannot marshal undefined value")
+)
 
 //
 // Parse produces a JSON object from its input, which is a string encoded as JSON.
@@ -40,14 +44,31 @@ func Parse(in []byte) (JSON, error) {
 // will be decoded by go's json package into an object for this interface
 //
 func (p *JSON) UnmarshalJSON(in []byte) error {
-	return json.Unmarshal(in, &p.v)
+	err := json.Unmarshal(in, &p.v)
+	if err != nil {
+		return err
+	}
+
+	if p.v == nil {
+		*p = Null
+	}
+
+	return nil
 }
 
 //
 // MarshalJSON implements JSON's custom parser so anything declared as type joe.JSON
 // will be encoded by go's json package into an object for this interface
 //
-func (p *JSON) MarshalJSON() ([]byte, error) {
+func (p JSON) MarshalJSON() ([]byte, error) {
+	if p.IsUndefined() {
+		return nil, ErrMarshalUndefined
+	}
+
+	if p.IsNull() {
+		return json.Marshal(nil)
+	}
+
 	return json.Marshal(p.v)
 }
 
@@ -62,7 +83,7 @@ func (o JSON) Value() interface{} {
 // IsNull returns true iff this object is a null object
 //
 func (o JSON) IsNull() bool {
-	return o.v == nil
+	return o == Null
 }
 
 //
@@ -70,7 +91,7 @@ func (o JSON) IsNull() bool {
 // accessing Object keys or Array indices through this interface that do not exist.
 //
 func (o JSON) IsUndefined() bool {
-	return o == Undefined
+	return o.v == nil
 }
 
 //
