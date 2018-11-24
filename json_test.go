@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/mnibecker/joe"
+	"github.com/mccanne/joe"
 )
 
 func Test_Unmarshal_Undefined(t *testing.T) {
