@@ -39,6 +39,11 @@ func Parse(in []byte) (JSON, error) {
 	return result, err
 }
 
+// Interface produces a JSON object from an interface{} input.
+func Interface(v interface{}) JSON {
+	return JSON{v}
+}
+
 //
 // UnmarshalJSON implements JSON's custom parser so anything declared as type joe.JSON
 // will be decoded by go's json package into an object for this interface
